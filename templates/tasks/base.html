@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Task Tracker — manage your tasks with priorities, statuses, and due dates.">
+    <title>{% block title %}Task Tracker{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'tasks/css/style.css' %}">
+</head>
+<body>
+    <!-- Animated gradient accent bar -->
+    <div class="accent-bar"></div>
+
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="{% url 'task_list' %}" class="nav-brand">
+                <span class="brand-icon">✦</span> Task Tracker
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'task_list' %}" class="nav-link {% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">
+                    Dashboard
+                </a>
+                <a href="{% url 'task_create' %}" class="nav-link btn-nav {% if request.resolver_match.url_name == 'task_create' %}active{% endif %}">
+                    + New Task
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="container main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Task Tracker &middot; Built with Django</p>
+        </div>
+    </footer>
+</body>
+</html>

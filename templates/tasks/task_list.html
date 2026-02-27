@@ -1,0 +1,79 @@
+{% extends "tasks/base.html" %}
+{% block title %}Dashboard — Task Tracker{% endblock %}
+
+{% block content %}
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-card">
+        <span class="stat-number">{{ total }}</span>
+        <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card stat-done">
+        <span class="stat-number">{{ completed }}</span>
+        <span class="stat-label">Completed</span>
+    </div>
+    <div class="stat-card stat-pending">
+        <span class="stat-number">{{ pending }}</span>
+        <span class="stat-label">Pending</span>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filter-section">
+    <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <a href="{% url 'task_list' %}" class="pill {% if not current_status %}pill-active{% endif %}">All</a>
+        <a href="?status=todo" class="pill {% if current_status == 'todo' %}pill-active{% endif %}">To Do</a>
+        <a href="?status=in_progress" class="pill {% if current_status == 'in_progress' %}pill-active{% endif %}">In
+            Progress</a>
+        <a href="?status=done" class="pill {% if current_status == 'done' %}pill-active{% endif %}">Done</a>
+    </div>
+    <div class="filter-group">
+        <span class="filter-label">Priority</span>
+        <a href="{% url 'task_list' %}" class="pill {% if not current_priority %}pill-active{% endif %}">All</a>
+        <a href="?priority=low" class="pill pill-low {% if current_priority == 'low' %}pill-active{% endif %}">Low</a>
+        <a href="?priority=medium"
+            class="pill pill-medium {% if current_priority == 'medium' %}pill-active{% endif %}">Medium</a>
+        <a href="?priority=high"
+            class="pill pill-high {% if current_priority == 'high' %}pill-active{% endif %}">High</a>
+    </div>
+</div>
+
+<!-- Task Cards -->
+{% if tasks %}
+<div class="task-grid">
+    {% for task in tasks %}
+    <div class="task-card {% if task.completed %}task-completed{% endif %}">
+        <div class="task-card-header">
+            <div class="priority-indicator priority-{{ task.priority }}"></div>
+            <span class="status-badge status-{{ task.status }}">{{ task.get_status_display }}</span>
+        </div>
+        <a href="{% url 'task_detail' task.pk %}" class="task-title-link">
+            <h3 class="task-title">{{ task.title }}</h3>
+        </a>
+        {% if task.description %}
+        <p class="task-desc">{{ task.description|truncatewords:20 }}</p>
+        {% endif %}
+        <div class="task-card-footer">
+            <div class="task-meta">
+                {% if task.due_date %}
+                <span class="due-chip">📅 {{ task.due_date|date:"M d, Y" }}</span>
+                {% endif %}
+                <span class="priority-chip priority-chip-{{ task.priority }}">{{ task.get_priority_display }}</span>
+            </div>
+            <a href="{% url 'task_toggle' task.pk %}" class="btn-toggle" title="Toggle complete">
+                {% if task.completed %}✓{% else %}○{% endif %}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h2>No tasks yet</h2>
+    <p>Create your first task to get started!</p>
+    <a href="{% url 'task_create' %}" class="btn btn-primary">+ New Task</a>
+</div>
+{% endif %}
+{% endblock %}
